@@ -6,7 +6,7 @@ from decimal import Decimal
 from .data_classes import CheckData, Response, ShopperCardData
 
 
-class ShopperPaymentClientAdapter:
+class ShopperPaymentsClientAdapter:
     def list_cards(self) -> Optional[Response]:
         raise NotImplementedError
 

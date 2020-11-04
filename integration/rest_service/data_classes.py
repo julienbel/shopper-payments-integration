@@ -17,12 +17,10 @@ class ShopperCardData:
     year: str = None
     cvv: str = None
 
-
 @dataclass
 class ErrorDetail:
     code: str
     message: str
-
 
 @dataclass
 class Response:
@@ -30,11 +28,9 @@ class Response:
     metadata: Dict = None
     error_details: List[ErrorDetail] = None
 
-
 @dataclass
 class CardBalanceResponse:
     balance: Union[Decimal, float, str]
-
 
 @dataclass
 class CardResponse:
@@ -43,11 +39,9 @@ class CardResponse:
     card_status: str = None
     last_four_digits: str = None
 
-
 @dataclass
 class ListCardResponse:
     cards: List[CardResponse]
-
 
 @dataclass
 class WalletBalanceResponse:

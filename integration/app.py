@@ -7,9 +7,9 @@ from os import getenv
 from flask import Flask, jsonify, request
 from requests import Timeout
 from .middlewares import AuthorizationMiddleware
-from integration.rest_service.adapters import ShopperPaymentClientAdapter
-from integration.rest_service.constants import FAILED, API_PATH, APP_NAME
-from integration.rest_service.data_classes import CheckData, ErrorDetail, Response
+from integration.rest_service.adapters import ShopperPaymentsClientAdapter
+from integration.rest_service.constants import FAILED, APP_NAME
+from integration.rest_service.data_classes import ErrorDetail, Response, ShopperCardData
 from integration.rest_service.providers.exceptions import (
     BadRequestAPIException,
     GenericAPIException,
@@ -21,21 +21,21 @@ logger = logging.getLogger(__name__)
 
 def run_app(cls):
     assert issubclass(
-        cls, ShopperPaymentClientAdapter
+        cls, ShopperPaymentsClientAdapter
     ), "adapter requires to extend from ShopperPaymentClientAdapter class"
-    shopper_payment_adapter = cls()
+    shopper_payments_adapter = cls()
 
     app = Flask(__name__)
     app.wsgi_app = AuthorizationMiddleware(app.wsgi_app)
 
 
-    @app.route(f'{API_PATH}/cards/', methods=['GET'])
+    @app.route(f'/cards', methods=['GET'])
     def list_cards():
         try:
-            response_data = shopper_payment_adapter.list_cards()
+            response_data = shopper_payments_adapter.list_cards()
         except (Timeout, ConnectionError):
             logger.info(
-                f"{APP_NAME} adapter timeout exception:{self.__class__.__name__}",
+                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -43,7 +43,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -52,7 +52,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -62,13 +62,13 @@ def run_app(cls):
         return response_data
 
 
-    @app.route(f'{API_PATH}/wallet/balance', methods=['GET'])
+    @app.route(f'/wallet/balance', methods=['GET'])
     def wallet_balance():
         try:
-            response_data = shopper_payment_adapter.wallet_balance()
+            response_data = shopper_payments_adapter.wallet_balance()
         except (Timeout, ConnectionError):
             logger.info(
-                f"{APP_NAME} adapter timeout exception:{self.__class__.__name__}",
+                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -85,7 +85,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -95,13 +95,13 @@ def run_app(cls):
         return response_data
 
 
-    @app.route(f'{API_PATH}/card/<card_issuer_id>/balance', methods=['GET'])
+    @app.route(f'/card/<card_issuer_id>/balance', methods=['GET'])
     def get_card_balance(card_issuer_id):
         try:
-            response_data = shopper_payment_adapter.get_card_balance(card_issuer_id=card_issuer_id)
+            response_data = shopper_payments_adapter.get_card_balance(card_issuer_id=card_issuer_id)
         except (Timeout, ConnectionError):
             logger.info(
-                f"{APP_NAME} adapter timeout exception:{self.__class__.__name__}",
+                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -109,7 +109,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -118,7 +118,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -128,14 +128,14 @@ def run_app(cls):
         return response_data
 
 
-    @app.route(f'{API_PATH}/card/<card_issuer_id>/load', methods=['POST'])
+    @app.route(f'/card/<card_issuer_id>/load', methods=['POST'])
     def load_card(card_issuer_id):
         data = json.loads(request.data)
         try:
-            response_data = shopper_payment_adapter.load_card(card_issuer_id=card_issuer_id, amount=data.get("amount"))
+            response_data = shopper_payments_adapter.load_card(card_issuer_id=card_issuer_id, amount=data.get("amount"))
         except (Timeout, ConnectionError):
             logger.info(
-                f"{APP_NAME} adapter timeout exception:{self.__class__.__name__}",
+                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -152,7 +152,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -162,14 +162,14 @@ def run_app(cls):
         return response_data
 
 
-    @app.route(f'{API_PATH}/card/<card_issuer_id>/unload', methods=['POST'])
+    @app.route(f'/card/<card_issuer_id>/unload', methods=['POST'])
     def unload_card(card_issuer_id):
         data = json.loads(request.data)
         try:
-            response_data = shopper_payment_adapter.unload_card(card_issuer_id=card_issuer_id, amount=data.get("amount"))
+            response_data = shopper_payments_adapter.unload_card(card_issuer_id=card_issuer_id, amount=data.get("amount"))
         except (Timeout, ConnectionError):
             logger.info(
-                f"{APP_NAME} adapter timeout exception:{self.__class__.__name__}",
+                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -177,7 +177,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -186,7 +186,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -196,7 +196,7 @@ def run_app(cls):
         return response_data
 
 
-    @app.route(f'{API_PATH}/card/<card_number_id>/assign', methods=['POST'])
+    @app.route(f'/card/<card_number_id>/assign', methods=['POST'])
     def assign_card(card_number_id):
         data = json.loads(request.data)
         shopper_card_data = ShopperCardData(email=data.get("email"),
@@ -211,10 +211,10 @@ def run_app(cls):
                                             cvv=data.get("ccv"))
 
         try:
-            response_data = shopper_payment_adapter.assign_card(card_number_id=card_number_id, shopper_card_data=shopper_card_data)
+            response_data = shopper_payments_adapter.assign_card(card_number_id=card_number_id, shopper_card_data=shopper_card_data)
         except (Timeout, ConnectionError):
             logger.info(
-                f"{APP_NAME} adapter timeout exception:{self.__class__.__name__}",
+                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -222,7 +222,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -231,7 +231,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -241,13 +241,13 @@ def run_app(cls):
         return response_data
 
 
-    @app.route(f'{API_PATH}/card/<card_issuer_id>/activate', methods=['POST'])
+    @app.route(f'/card/<card_issuer_id>/activate', methods=['POST'])
     def activate_card(card_issuer_id):
         try:
-            response_data = shopper_payment_adapter.activate_card(card_issuer_id=card_issuer_id)
+            response_data = shopper_payments_adapter.activate_card(card_issuer_id=card_issuer_id)
         except (Timeout, ConnectionError):
             logger.info(
-                f"{APP_NAME} adapter timeout exception:{self.__class__.__name__}",
+                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -255,7 +255,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -264,7 +264,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -274,13 +274,13 @@ def run_app(cls):
         return response_data
 
 
-    @app.route(f'{API_PATH}/card/<card_issuer_id>/deactivate', methods=['POST'])
+    @app.route(f'/card/<card_issuer_id>/deactivate', methods=['POST'])
     def deactivate_card(card_issuer_id):
         try:
-            response_data = shopper_payment_adapter.deactivate_card(card_issuer_id=card_issuer_id)
+            response_data = shopper_payments_adapter.deactivate_card(card_issuer_id=card_issuer_id)
         except (Timeout, ConnectionError):
             logger.info(
-                f"{APP_NAME} adapter timeout exception:{self.__class__.__name__}",
+                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -288,7 +288,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -297,7 +297,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -307,14 +307,14 @@ def run_app(cls):
         return response_data
 
 
-    @app.route(f'{API_PATH}/healthz', methods=["GET"])
+    @app.route(f'/healthz', methods=["GET"])
     def health():
         return {}, 200
 
     # External integration's health
-    @app.route(f'{API_PATH}/external_health', methods=["GET"])
+    @app.route(f'/external_health', methods=["GET"])
     def external_health():
-        if shopper_payment_adapter.external_service_is_healthy():
+        if shopper_payments_adapter.external_service_is_healthy():
             return {}, 200
         return {}, 503
 
