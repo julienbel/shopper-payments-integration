@@ -1,3 +1,4 @@
+import base64
 from werkzeug.wrappers import Request, Response
 from os import getenv
 
