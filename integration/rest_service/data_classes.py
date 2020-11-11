@@ -25,7 +25,7 @@ class ErrorDetail:
 @dataclass
 class Response:
     status: str
-    metadata: Dict = None
+    metadata: Union[CardBalanceResponse, CardResponse, ListCardResponse, WalletBalanceResponse] = None
     error_details: List[ErrorDetail] = None
 
 @dataclass

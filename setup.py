@@ -14,5 +14,5 @@ setup(
         "requests==2.21.0",
         "six==1.15.0",
         "Flask-Caching==1.8",
-    ],
+        "sentry-sdk==0.14.0"]
 )

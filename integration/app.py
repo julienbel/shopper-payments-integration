@@ -3,6 +3,10 @@ import json
 import logging
 from json import JSONDecodeError
 from os import getenv
+import sentry_sdk
+
+
+
 
 from flask import Flask, jsonify, request
 from requests import Timeout
@@ -18,6 +22,15 @@ from integration.rest_service.providers.exceptions import (
 
 logger = logging.getLogger(__name__)
 
+
+ENVIRONMENT = getenv("FLASK_ENVIRONMENT", "local")
+SENTRY_DSN = getenv("SENTRY_DSN", None)
+
+if SENTRY_DSN:
+    sentry_sdk.init(
+     SENTRY_DSN,
+     environment=ENVIRONMENT,
+    )
 
 def run_app(cls):
     assert issubclass(
