@@ -15,5 +15,7 @@ setup(
         "six==1.15.0",
         "Flask-Caching==1.8",
         "sentry-sdk==0.14.0",
+        "redis==3.5.3",
+        "redis-lock==0.2.0",
     ],
 )
