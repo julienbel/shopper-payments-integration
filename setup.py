@@ -3,7 +3,7 @@ from distutils.core import setup
 import setuptools
 
 setup(
-    name="shopper_payments_integrations",
+    name="shopper_payments_integration",
     version="0.1dev",
     packages=setuptools.find_packages(),
     license="",
