@@ -4,7 +4,7 @@ import setuptools
 
 setup(
     name="shopper_payments_integration",
-    version="0.3dev",
+    version="0.4dev",
     packages=setuptools.find_packages(),
     license="",
     long_description=open("README.md").read(),
@@ -16,6 +16,6 @@ setup(
         "Flask-Caching==1.8",
         "sentry-sdk==0.14.0",
         "redis==3.5.3",
-        "redis-lock==0.2.0",
+        "python-redis-lock==3.6.0",
     ],
 )
