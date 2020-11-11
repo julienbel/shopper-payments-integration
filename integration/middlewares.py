@@ -1,3 +1,7 @@
+from werkzeug.wrappers import Request, Response
+from os import getenv
+
+
 class AuthorizationMiddleware:
     '''
     Simple WSGI middleware
