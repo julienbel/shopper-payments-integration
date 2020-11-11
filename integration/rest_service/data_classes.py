@@ -23,12 +23,6 @@ class ErrorDetail:
     message: str
 
 @dataclass
-class Response:
-    status: str
-    metadata: Union[CardBalanceResponse, CardResponse, ListCardResponse, WalletBalanceResponse] = None
-    error_details: List[ErrorDetail] = None
-
-@dataclass
 class CardBalanceResponse:
     balance: Union[Decimal, float, str]
 
@@ -49,3 +43,8 @@ class WalletBalanceResponse:
     currency: str
     country: str
 
+@dataclass
+class Response:
+    status: str
+    metadata: Union[CardBalanceResponse, CardResponse, ListCardResponse, WalletBalanceResponse] = None
+    error_details: List[ErrorDetail] = None
