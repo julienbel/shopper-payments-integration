@@ -5,7 +5,13 @@ from flask import Flask
 import requests
 from requests import HTTPError
 from six.moves.urllib.parse import urljoin
-from ..generics import exceptions
+from .exceptions import (BadRequestAPIException,
+                         NotFoundAPIException,
+                         GenericErrorDetailException,
+                         ForbiddenAPIException,
+                         UnauthorizedAPIException,
+                         UnprocessableEntityAPIException,
+                         GenericAPIException)
 from flask_caching import Cache
 import redis_lock
 from redis import StrictRedis
@@ -37,15 +43,15 @@ class GenericAPIClient(object):
         self._set_headers(force_refresh=True)
 
     def _set_headers(self, force_refresh=False):
-        with redis_lock.Lock(conn, f"bgc-{self.base_url}", expire=60):
+        with redis_lock.Lock(conn, f"shopper-payments-{self.base_url}", expire=60):
             if force_refresh:
                 headers = self.get_headers()
             else:
-                headers = cache.get(f"bgc-{self.base_url}")
+                headers = cache.get(f"shopper-payments-{self.base_url}")
 
                 if not headers:
                     headers = self.get_headers()
-                    cache.set(f"bgc-{self.base_url}", headers)
+                    cache.set(f"shopper-payments-{self.base_url}", headers)
 
     def get_headers(self) -> Dict[str, str]:
         return dict()

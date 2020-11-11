@@ -3,7 +3,7 @@ from typing import Dict, Union
 
 from typing import Dict, Union, Optional
 from decimal import Decimal
-from .data_classes import CheckData, Response, ShopperCardData
+from .data_classes import Response, ShopperCardData
 
 
 class ShopperPaymentsClientAdapter:

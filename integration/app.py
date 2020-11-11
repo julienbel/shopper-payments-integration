@@ -5,14 +5,11 @@ from json import JSONDecodeError
 from os import getenv
 import sentry_sdk
 
-
-
-
 from flask import Flask, jsonify, request
 from requests import Timeout
 from .middlewares import AuthorizationMiddleware
 from integration.rest_service.adapters import ShopperPaymentsClientAdapter
-from integration.rest_service.constants import FAILED, APP_NAME
+from integration.rest_service.constants import FAILED
 from integration.rest_service.data_classes import ErrorDetail, Response, ShopperCardData
 from integration.rest_service.providers.exceptions import (
     BadRequestAPIException,
