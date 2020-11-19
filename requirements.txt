@@ -35,6 +35,9 @@ twine==3.2.0
 typing-extensions==3.7.4.3
 urllib3==1.24.3
 webencodings==0.5.1
+python-stdnum==1.12
+phonenumbers==8.10.20
 Werkzeug==1.0.1
+arrow==0.15.5
 redis==3.5.3
 python-redis-lock==3.6.0
