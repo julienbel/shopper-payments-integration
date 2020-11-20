@@ -153,7 +153,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"{APP_NAME} adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments adapter request exceptionn:{self.__class__.__name__}",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
