@@ -46,5 +46,5 @@ class WalletBalanceResponse:
 @dataclass
 class Response:
     status: str
-    metadata: Union[CardBalanceResponse, CardResponse, ListCardResponse, WalletBalanceResponse] = None
+    data: Union[CardBalanceResponse, CardResponse, ListCardResponse, WalletBalanceResponse] = None
     error_details: List[ErrorDetail] = None
