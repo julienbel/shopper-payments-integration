@@ -78,7 +78,7 @@ def run_app(cls):
             response_data = shopper_payments_adapter.wallet_balance()
         except (Timeout, ConnectionError):
             logger.info(
-                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
+                f"Shopper payments integration adapter timeout exception",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -86,7 +86,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -95,7 +95,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                f"Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -111,7 +111,7 @@ def run_app(cls):
             response_data = shopper_payments_adapter.get_card_balance(card_issuer_id=card_issuer_id)
         except (Timeout, ConnectionError):
             logger.info(
-                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
+                "Shopper payments integration adapter timeout exception",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -119,7 +119,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -128,7 +128,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -145,7 +145,7 @@ def run_app(cls):
             response_data = shopper_payments_adapter.load_card(card_issuer_id=card_issuer_id, amount=data.get("amount"))
         except (Timeout, ConnectionError):
             logger.info(
-                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
+                "Shopper payments integration adapter timeout exception",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -153,7 +153,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"Shopper payments adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -162,7 +162,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -179,7 +179,7 @@ def run_app(cls):
             response_data = shopper_payments_adapter.unload_card(card_issuer_id=card_issuer_id, amount=data.get("amount"))
         except (Timeout, ConnectionError):
             logger.info(
-                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
+                "Shopper payments integration adapter timeout exception",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -187,7 +187,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -196,7 +196,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -224,7 +224,7 @@ def run_app(cls):
             response_data = shopper_payments_adapter.assign_card(card_number_id=card_number_id, shopper_card_data=shopper_card_data)
         except (Timeout, ConnectionError):
             logger.info(
-                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
+                "Shopper payments integration adapter timeout exceptio",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -232,7 +232,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -241,7 +241,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -257,7 +257,7 @@ def run_app(cls):
             response_data = shopper_payments_adapter.activate_card(card_issuer_id=card_issuer_id)
         except (Timeout, ConnectionError):
             logger.info(
-                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
+                "Shopper payments integration adapter timeout exception",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -265,7 +265,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -274,7 +274,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -290,7 +290,7 @@ def run_app(cls):
             response_data = shopper_payments_adapter.deactivate_card(card_issuer_id=card_issuer_id)
         except (Timeout, ConnectionError):
             logger.info(
-                f"Shopper payments integration adapter timeout exception:{self.__class__.__name__}",
+                "Shopper payments integration adapter timeout exception",
             )
             return jsonify(Response(
                 status=FAILED,
@@ -298,7 +298,7 @@ def run_app(cls):
             ))
         except (BadRequestAPIException, NotFoundAPIException) as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
@@ -307,7 +307,7 @@ def run_app(cls):
             ))
         except GenericAPIException as e:
             logger.info(
-                f"Shopper payments integration adapter request exceptionn:{self.__class__.__name__}",
+                "Shopper payments integration adapter request exception",
                 extra=self.get_logger_data(None, e.message),
             )
             return jsonify(Response(
