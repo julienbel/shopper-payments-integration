@@ -63,9 +63,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(
-                            code="408", message=json.loads({"error": "Timeout"})
-                        )
+                        ErrorDetail(code="408", message="Timeout")
                     ],
                 )
             )
@@ -78,7 +76,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="400", message=json.loads(e.message))
+                        ErrorDetail(code="400", message=e.message)
                     ],
                 )
             )
@@ -91,7 +89,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="500", message=json.loads(e.message))
+                        ErrorDetail(code="500", message=e.message)
                     ],
                 )
             )
@@ -108,9 +106,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(
-                            code="408", message=json.loads({"error": "Timeout"})
-                        )
+                        ErrorDetail(code="408", message="Timeout")
                     ],
                 )
             )
@@ -123,20 +119,20 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="400", message=json.loads(e.message))
+                        ErrorDetail(code="400", message=e.message)
                     ],
                 )
             )
         except GenericAPIException as e:
             logger.info(
                 "Shopper payments integration adapter generic exception",
-                extra=get_logger_data(check_data, e.message),
+                extra=get_logger_data(e.message),
             )
             return jsonify(
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="500", message=json.loads(e.message))
+                        ErrorDetail(code="500", message=e.message)
                     ],
                 )
             )
@@ -154,7 +150,7 @@ def run_app(cls):
                     status=FAILED,
                     error_details=[
                         ErrorDetail(
-                            code="408", message=json.loads({"error": "Timeout"})
+                            code="408", message="Timeout"
                         )
                     ],
                 )
@@ -168,7 +164,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="400", message=json.loads(e.message))
+                        ErrorDetail(code="400", message=e.message)
                     ],
                 )
             )
@@ -181,7 +177,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="500", message=json.loads(e.message))
+                        ErrorDetail(code="500", message=e.message)
                     ],
                 )
             )
@@ -199,9 +195,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(
-                            code="408", message=json.loads({"error": "Timeout"})
-                        )
+                        ErrorDetail(code="408", message="Timeout")
                     ],
                 )
             )
@@ -214,7 +208,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="400", message=json.loads(e.message))
+                        ErrorDetail(code="400", message=e.message)
                     ],
                 )
             )
@@ -227,7 +221,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="500", message=json.loads(e.message))
+                        ErrorDetail(code="500", message=e.message)
                     ],
                 )
             )
@@ -245,9 +239,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(
-                            code="408", message=json.loads({"error": "Timeout"})
-                        )
+                        ErrorDetail(code="408", message="Timeout")
                     ],
                 )
             )
@@ -260,7 +252,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="400", message=json.loads(e.message))
+                        ErrorDetail(code="400", message=e.message)
                     ],
                 )
             )
@@ -273,7 +265,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="500", message=json.loads(e.message))
+                        ErrorDetail(code="500", message=e.message)
                     ],
                 )
             )
@@ -303,7 +295,7 @@ def run_app(cls):
                     status=FAILED,
                     error_details=[
                         ErrorDetail(
-                            code="408", message=json.loads({"error": "Timeout"})
+                            code="408", message="Timeout"
                         )
                     ],
                 )
@@ -317,7 +309,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="400", message=json.loads(e.message))
+                        ErrorDetail(code="400", message=e.message)
                     ],
                 )
             )
@@ -330,7 +322,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="500", message=json.loads(e.message))
+                        ErrorDetail(code="500", message=e.message)
                     ],
                 )
             )
@@ -347,9 +339,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(
-                            code="408", message=json.loads({"error": "Timeout"})
-                        )
+                        ErrorDetail(code="408", message="Timeout")
                     ],
                 )
             )
@@ -362,7 +352,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="400", message=json.loads(e.message))
+                        ErrorDetail(code="400", message=e.message)
                     ],
                 )
             )
@@ -375,7 +365,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="500", message=json.loads(e.message))
+                        ErrorDetail(code="500", message=e.message)
                     ],
                 )
             )
@@ -392,9 +382,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(
-                            code="408", message=json.loads({"error": "Timeout"})
-                        )
+                        ErrorDetail(code="408", message="Timeout")
                     ],
                 )
             )
@@ -407,7 +395,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="400", message=json.loads(e.message))
+                        ErrorDetail(code="400", message=e.message)
                     ],
                 )
             )
@@ -420,7 +408,7 @@ def run_app(cls):
                 Response(
                     status=FAILED,
                     error_details=[
-                        ErrorDetail(code="500", message=json.loads(e.message))
+                        ErrorDetail(code="500", message=e.message)
                     ],
                 )
             )
