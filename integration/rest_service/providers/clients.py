@@ -18,9 +18,9 @@ from redis import StrictRedis
 
 from os import getenv
 
-redis_host = get_env("REDIS_CACHE_HOSTNAME", "localhost")
-redis_port = get_env("REDIS_CACHE_PORT", 6379)
-redis_db = get_env("REDIS_CACHE_DATABASE", 0)
+redis_host = getenv("REDIS_CACHE_HOSTNAME", "localhost")
+redis_port = getenv("REDIS_CACHE_PORT", 6379)
+redis_db = getenv("REDIS_CACHE_DATABASE", 0)
 
 conn = StrictRedis(host=redis_host,
                    port=redis_port,
