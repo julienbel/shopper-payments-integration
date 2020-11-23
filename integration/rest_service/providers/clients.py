@@ -16,7 +16,15 @@ from flask_caching import Cache
 import redis_lock
 from redis import StrictRedis
 
-conn = StrictRedis()
+from os import getenv
+
+redis_host = get_env("REDIS_CACHE_HOSTNAME", "localhost")
+redis_port = get_env("REDIS_CACHE_PORT", 6379)
+redis_db = get_env("REDIS_CACHE_DATABASE", 0)
+
+conn = StrictRedis(host=redis_host,
+                   port=redis_port,
+                   db=redis_db)
 config = {
     "DEBUG": True,
     "CACHE_TYPE": "simple",
