@@ -1,32 +1,26 @@
 # -*- coding: utf-8 -*-
-class GenericErrorDetailException(Exception):
-    def __init__(self, *args, **kwargs):
-        self.message = kwargs.get("message")
-        self.code = kwargs.get("code")
-
-    def __str__(self):
-        return "{}".format(self.message)
+from integration.rest_service.exceptions import GenericAPIException
 
 
-class GenericAPIException(GenericErrorDetailException):
+class GenericAPIException(GenericAPIException):
     pass
 
 
-class BadRequestAPIException(GenericErrorDetailException):
+class BadRequestAPIException(GenericAPIException):
     pass
 
 
-class UnauthorizedAPIException(GenericErrorDetailException):
+class UnauthorizedAPIException(GenericAPIException):
     pass
 
 
-class ForbiddenAPIException(GenericErrorDetailException):
+class ForbiddenAPIException(GenericAPIException):
     pass
 
 
-class NotFoundAPIException(GenericErrorDetailException):
+class NotFoundAPIException(GenericAPIException):
     pass
 
 
-class UnprocessableEntityAPIException(GenericErrorDetailException):
+class UnprocessableEntityAPIException(GenericAPIException):
     pass
