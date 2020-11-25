@@ -257,7 +257,6 @@ def run_app(cls):
                 )
             )
         except GenericAPIException as e:
-            print("[app.unload_card]", e.message)
             logger.info(
                 "Shopper payments integration adapter generic exception",
                 extra=get_logger_data(e.message),
@@ -270,9 +269,6 @@ def run_app(cls):
                     ],
                 )
             )
-        except Exception as e:
-            print(f"execption {type(e)}")
-
         return response_data
 
 
