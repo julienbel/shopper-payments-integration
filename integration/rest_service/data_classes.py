@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from typing import List, Dict, Union
 from decimal import Decimal
+from typing import List, Union
 
 
 @dataclass
@@ -17,14 +17,17 @@ class ShopperCardData:
     year: str = None
     cvv: str = None
 
+
 @dataclass
 class ErrorDetail:
     code: str
     message: str
 
+
 @dataclass
 class CardBalanceResponse:
     balance: Union[Decimal, float, str]
+
 
 @dataclass
 class CardResponse:
@@ -33,9 +36,11 @@ class CardResponse:
     card_status: str = None
     last_four_digits: str = None
 
+
 @dataclass
 class ListCardResponse:
     cards: List[CardResponse]
+
 
 @dataclass
 class WalletBalanceResponse:
@@ -43,8 +48,11 @@ class WalletBalanceResponse:
     currency: str
     country: str
 
+
 @dataclass
 class Response:
     status: str
-    data: Union[CardBalanceResponse, CardResponse, ListCardResponse, WalletBalanceResponse] = None
+    data: Union[
+        CardBalanceResponse, CardResponse, ListCardResponse, WalletBalanceResponse
+    ] = None
     error_details: List[ErrorDetail] = None
