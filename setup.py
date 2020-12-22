@@ -19,6 +19,6 @@ setup(
         "python-redis-lock==3.6.0",
         "arrow==0.15.5",
         "phonenumbers==8.10.20",
-        "python-stdnum==1.12"
+        "python-stdnum==1.12",
     ],
 )

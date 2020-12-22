@@ -1,35 +1,24 @@
 from __future__ import unicode_literals
 
+from os import getenv
 from typing import Dict, Union
-from flask import Flask
+
+import redis_lock
 import requests
+from flask import Flask
+from flask_caching import Cache
+from redis import StrictRedis
 from requests import HTTPError
 from six.moves.urllib.parse import urljoin
-from .exceptions import (BadRequestAPIException,
-                         NotFoundAPIException,
-                         GenericErrorDetailException,
-                         ForbiddenAPIException,
-                         UnauthorizedAPIException,
-                         UnprocessableEntityAPIException,
-                         GenericAPIException)
-from flask_caching import Cache
-import redis_lock
-from redis import StrictRedis
 
-from os import getenv
+from integration.rest_service.providers import exceptions
 
 redis_host = getenv("REDIS_CACHE_HOSTNAME", "localhost")
 redis_port = getenv("REDIS_CACHE_PORT", 6379)
 redis_db = getenv("REDIS_CACHE_DATABASE", 0)
 
-conn = StrictRedis(host=redis_host,
-                   port=redis_port,
-                   db=redis_db)
-config = {
-    "DEBUG": True,
-    "CACHE_TYPE": "simple",
-    "CACHE_DEFAULT_TIMEOUT": 300
-}
+conn = StrictRedis(host=redis_host, port=redis_port, db=redis_db)
+config = {"DEBUG": True, "CACHE_TYPE": "simple", "CACHE_DEFAULT_TIMEOUT": 300}
 app = Flask(__name__)
 app.config.from_mapping(config)
 cache = Cache(app)
