@@ -15,7 +15,9 @@ class AuthorizationMiddleware:
     def __call__(self, environ, start_response):
         request = Request(environ)
         signature = request.headers.get("Authorization")
-        password = str(base64.b64decode(signature), "utf-8")
+        password = None
+        if signature:
+            password = str(base64.b64decode(signature), "utf-8")
 
         if password != getenv("REQUEST_PASSWORD"):
             res = Response("Authorization failed", mimetype="text/plain", status=403)
