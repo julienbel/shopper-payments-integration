@@ -15,8 +15,6 @@ setup(
         "six==1.15.0",
         "Flask-Caching==1.8",
         "sentry-sdk==0.14.0",
-        "redis==3.5.3",
-        "python-redis-lock==3.6.0",
         "arrow==0.15.5",
         "phonenumbers==8.10.20",
         "python-stdnum==1.12",
