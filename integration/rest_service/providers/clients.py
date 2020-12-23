@@ -40,7 +40,7 @@ class GenericAPIClient(object):
             if not headers:
                 headers = self.get_headers()
                 cache.set(f"shopper-payments-{self.base_url}", headers)
-        self.client.headers.update(headers)
+        self.client.headers = headers
 
     def get_headers(self) -> Dict[str, str]:
         return dict()
