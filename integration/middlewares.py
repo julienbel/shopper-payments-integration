@@ -18,9 +18,11 @@ class AuthorizationMiddleware:
         password = None
         if signature:
             password = str(base64.b64decode(signature), "utf-8")
-
-        if password != getenv("REQUEST_PASSWORD"):
-            res = Response("Authorization failed", mimetype="text/plain", status=403)
-            return res(environ, start_response)
+        if request.path not in ["/healthz"]:
+            if password != getenv("REQUEST_PASSWORD"):
+                res = Response(
+                    "Authorization failed", mimetype="text/plain", status=403
+                )
+                return res(environ, start_response)
 
         return self.app(environ, start_response)

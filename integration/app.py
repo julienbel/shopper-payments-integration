@@ -61,7 +61,7 @@ def run_app(cls):
         except (Timeout, ConnectionError) as e:
             logger.info(
                 "Shopper payments integration adapter timeout",
-                extra=get_logger_data(e),
+                extra=get_logger_data(e.message),
             )
             return jsonify(
                 Response(
