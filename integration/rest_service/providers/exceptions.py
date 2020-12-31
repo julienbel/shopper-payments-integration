@@ -1,5 +1,15 @@
+class UnhandledErrorAPIException(Exception):
+    error_code = "UNHANDLED_ERROR_API_EXCEPTION"
+
+    def __init__(self, *args, **kwargs):
+        self.error_message = kwargs.get("error_message")
+
+    def __str__(self):
+        return f"{self.error_message}"
+
 
 class GenericAPIException(Exception):
+    error_code = "GENERIC_API_EXCEPTION"
     def __init__(self, *args, **kwargs):
         self.error_message = kwargs.get("error_message")
 

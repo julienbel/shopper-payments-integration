@@ -52,7 +52,6 @@ class GenericAPIClient(object):
         return self.host
 
     def handle_error(self, response):
-        print(response)
         if response.status_code == 400:
             raise exceptions.BadRequestAPIException(
                 code=response.status_code, error_message=response.content
