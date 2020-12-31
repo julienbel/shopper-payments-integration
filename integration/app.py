@@ -44,9 +44,8 @@ def run_app(cls):
         return jsonify(
             Response(
                 error_details=[ErrorDetail(code=e.error_code, message=error_message)],
-                status=code
             )
-        )
+        ), code
 
     def get_logger_data(exception):
         data = {
