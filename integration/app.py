@@ -106,6 +106,7 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id, amount=data.get("amount")
             )
         except GenericAPIException as e:
+            print(type(e))
             logger.info(f"Shopper payments integration (load_card) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
