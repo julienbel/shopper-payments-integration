@@ -1,32 +1,35 @@
-# -*- coding: utf-8 -*-
-class GenericErrorDetailException(Exception):
+
+class GenericAPIException(Exception):
     def __init__(self, *args, **kwargs):
-        self.message = kwargs.get("message")
-        self.code = kwargs.get("code")
+        self.error_message = kwargs.get("error_message")
 
     def __str__(self):
-        return "{}".format(self.message)
+        return f"{self.error_message}"
 
 
-class GenericAPIException(GenericErrorDetailException):
-    pass
+class BadRequestAPIException(GenericAPIException):
+    error_code = "PROVIDER_BAD_REQUEST_ERROR"
 
 
-class BadRequestAPIException(GenericErrorDetailException):
-    pass
+class TimeoutAPIException(GenericAPIException):
+    error_code = "PROVIDER_TIMEOUT_ERROR"
 
 
-class UnauthorizedAPIException(GenericErrorDetailException):
-    pass
+class UnauthorizedAPIException(GenericAPIException):
+    error_code = "PROVIDER_UNAUTHORIZED_ERROR"
 
 
-class ForbiddenAPIException(GenericErrorDetailException):
-    pass
+class ForbiddenAPIException(GenericAPIException):
+    error_code = "PROVIDER_FORBIDDEN_ERROR"
 
 
-class NotFoundAPIException(GenericErrorDetailException):
-    pass
+class NotFoundAPIException(GenericAPIException):
+    error_code = "PROVIDER_NOT_FOUND_ERROR"
 
 
-class UnprocessableEntityAPIException(GenericErrorDetailException):
-    pass
+class UnprocessableEntityAPIException(GenericAPIException):
+    error_code = "PROVIDER_UNPROCESSABLE_ENTITY_ERROR"
+
+
+class ServiceUnavailableAPIException(GenericAPIException):
+    error_code = "PROVIDER_SERVICE_UNAVAILABLE_ERROR"
