@@ -1,18 +1,21 @@
+import base64
 import json
 import logging
 from json import JSONDecodeError
-import base64
 from os import getenv
+
 import sentry_sdk
 from flask import Flask, jsonify, request
 
 from integration.rest_service.adapters import ShopperPaymentsClientAdapter
-from integration.rest_service.data_classes import ErrorDetail, ShopperCardData, ErrorResponse, Response
-from integration.rest_service.providers.exceptions import (
-    GenericAPIException
+from integration.rest_service.data_classes import (
+    ErrorDetail,
+    ErrorResponse,
+    Response,
+    ShopperCardData,
 )
-
 from integration.rest_service.exceptions import UnauthorizedSatelliteException
+from integration.rest_service.providers.exceptions import GenericAPIException
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +38,6 @@ def run_app(cls):
 
     app = Flask(__name__)
 
-
     def validate_request(signature):
         password = None
         if signature:
@@ -51,11 +53,16 @@ def run_app(cls):
             error_message = e.error_message.decode()
         except AttributeError:
             error_message = e.error_message
-        return jsonify(
-            ErrorResponse(
-                error_details=[ErrorDetail(code=e.error_code, message=error_message)],
-            )
-        ), code
+        return (
+            jsonify(
+                ErrorResponse(
+                    error_details=[
+                        ErrorDetail(code=e.error_code, message=error_message)
+                    ],
+                )
+            ),
+            code,
+        )
 
     def get_logger_data(exception):
         data = {
@@ -63,7 +70,7 @@ def run_app(cls):
                 "provider": shopper_payments_adapter.name,
             }
         }
-        message = exception.message if hasattr(exception, 'message') else None
+        message = exception.message if hasattr(exception, "message") else None
         if message:
             try:
                 data["data"]["detail"] = json.loads(message)
@@ -83,12 +90,14 @@ def run_app(cls):
         try:
             response_data = shopper_payments_adapter.list_cards()
         except GenericAPIException as e:
-            logger.info("Shopper payments integration (list_cards) request error %s", e.error_message,
-                        extra=get_logger_data(e))
+            logger.info(
+                "Shopper payments integration (list_cards) request error %s",
+                e.error_message,
+                extra=get_logger_data(e),
+            )
             return get_error_response(e, 400)
 
         return jsonify(Response(data=response_data))
-
 
     @app.route(f"/wallet/balance", methods=["GET"])
     def wallet_balance():
@@ -100,8 +109,11 @@ def run_app(cls):
         try:
             response_data = shopper_payments_adapter.wallet_balance()
         except GenericAPIException as e:
-            logger.info("Shopper payments integration (wallet_balance) request error %s", e.error_message,
-                        extra=get_logger_data(e))
+            logger.info(
+                "Shopper payments integration (wallet_balance) request error %s",
+                e.error_message,
+                extra=get_logger_data(e),
+            )
             return get_error_response(e, 400)
         return jsonify(Response(data=response_data))
 
@@ -117,8 +129,11 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id
             )
         except GenericAPIException as e:
-            logger.info("Shopper payments integration (get_card_balance) request error %s", e.error_message,
-                        extra=get_logger_data(e))
+            logger.info(
+                "Shopper payments integration (get_card_balance) request error %s",
+                e.error_message,
+                extra=get_logger_data(e),
+            )
             return get_error_response(e, 400)
         return jsonify(Response(data=response_data))
 
@@ -135,8 +150,11 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id, amount=data.get("amount")
             )
         except GenericAPIException as e:
-            logger.info("Shopper payments integration (load_card) request error %s", e.error_message,
-                        extra=get_logger_data(e))
+            logger.info(
+                "Shopper payments integration (load_card) request error %s",
+                e.error_message,
+                extra=get_logger_data(e),
+            )
             return get_error_response(e, 400)
         return jsonify(response_data)
 
@@ -153,8 +171,11 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id, amount=data.get("amount")
             )
         except GenericAPIException as e:
-            logger.info("Shopper payments integration (unload_card) request error %s", e.error_message,
-                        extra=get_logger_data(e))
+            logger.info(
+                "Shopper payments integration (unload_card) request error %s",
+                e.error_message,
+                extra=get_logger_data(e),
+            )
             return get_error_response(e, 400)
         return jsonify(response_data)
 
@@ -164,7 +185,6 @@ def run_app(cls):
             validate_request(request.headers.get("Authorization"))
         except UnauthorizedSatelliteException as e:
             return get_error_response(e, 403)
-
 
         data = json.loads(request.data)
         shopper_card_data = ShopperCardData(
@@ -185,8 +205,11 @@ def run_app(cls):
                 card_number_id=card_number_id, shopper_card_data=shopper_card_data
             )
         except GenericAPIException as e:
-            logger.info("Shopper payments integration (assign_card) request error %s", e.error_message,
-                        extra=get_logger_data(e))
+            logger.info(
+                "Shopper payments integration (assign_card) request error %s",
+                e.error_message,
+                extra=get_logger_data(e),
+            )
             return get_error_response(e, 400)
         return jsonify(response_data)
 
@@ -203,8 +226,11 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id
             )
         except GenericAPIException as e:
-            logger.info("Shopper payments integration (activate_card) request error %s", e.error_message,
-                        extra=get_logger_data(e))
+            logger.info(
+                "Shopper payments integration (activate_card) request error %s",
+                e.error_message,
+                extra=get_logger_data(e),
+            )
             return get_error_response(e, 400)
         return jsonify(response_data)
 
@@ -220,8 +246,11 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id
             )
         except GenericAPIException as e:
-            logger.info("Shopper payments integration (deactivate_card) request error %s", e.error_message,
-                        extra=get_logger_data(e))
+            logger.info(
+                "Shopper payments integration (deactivate_card) request error %s",
+                e.error_message,
+                extra=get_logger_data(e),
+            )
             return get_error_response(e, 400)
         return jsonify(response_data)
 

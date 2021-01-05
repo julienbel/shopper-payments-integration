@@ -1,7 +1,13 @@
 from decimal import Decimal
 from typing import Dict, Optional, Union
 
-from .data_classes import Response, ShopperCardData, ListCardResponse, WalletBalanceResponse, CardBalanceResponse
+from .data_classes import (
+    CardBalanceResponse,
+    ListCardResponse,
+    Response,
+    ShopperCardData,
+    WalletBalanceResponse,
+)
 
 
 class ShopperPaymentsClientAdapter:
@@ -40,10 +46,14 @@ class ShopperPaymentsClientAdapter:
     ) -> WalletBalanceResponse:
         raise NotImplementedError
 
-    def response_card_balance(self, data: Dict[str, Union[str, int, Dict]]) -> CardBalanceResponse:
+    def response_card_balance(
+        self, data: Dict[str, Union[str, int, Dict]]
+    ) -> CardBalanceResponse:
         raise NotImplementedError
 
-    def response_list_cards(self, data: Dict[str, Union[str, int, Dict]]) -> ListCardResponse:
+    def response_list_cards(
+        self, data: Dict[str, Union[str, int, Dict]]
+    ) -> ListCardResponse:
         raise NotImplementedError
 
     def external_service_is_healthy(self):

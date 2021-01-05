@@ -10,6 +10,7 @@ class UnhandledErrorAPIException(Exception):
 
 class GenericAPIException(Exception):
     error_code = "GENERIC_API_EXCEPTION"
+
     def __init__(self, *args, **kwargs):
         self.error_message = kwargs.get("error_message")
 
