@@ -1,8 +1,8 @@
 import json
 import logging
 from json import JSONDecodeError
+import base64
 from os import getenv
-
 import sentry_sdk
 from flask import Flask, jsonify, request
 
@@ -11,8 +11,6 @@ from integration.rest_service.data_classes import ErrorDetail, ShopperCardData, 
 from integration.rest_service.providers.exceptions import (
     GenericAPIException
 )
-import base64
-from os import getenv
 
 from integration.rest_service.exceptions import UnauthorizedSatelliteException
 
