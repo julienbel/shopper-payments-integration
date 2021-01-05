@@ -37,7 +37,9 @@ def run_app(cls):
 
 
     def validate_request(signature):
-        password = str(base64.b64decode(signature), "utf-8")
+        password = None
+        if signature:
+            password = str(base64.b64decode(signature), "utf-8")
 
         if not password == getenv("REQUEST_PASSWORD"):
             raise UnauthorizedSatelliteException(
