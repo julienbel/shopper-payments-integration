@@ -1,11 +1,11 @@
 from decimal import Decimal
 from typing import Dict, Optional, Union
 
-from .data_classes import Response, ShopperCardData
+from .data_classes import Response, ShopperCardData, ListCardResponse
 
 
 class ShopperPaymentsClientAdapter:
-    def list_cards(self) -> Optional[Response]:
+    def list_cards(self) -> ListCardResponse:
         raise NotImplementedError
 
     def assign_card(
