@@ -51,7 +51,6 @@ class WalletBalanceResponse:
 
 @dataclass
 class Response:
-    status: str = None
     data: Union[
         CardBalanceResponse, CardResponse, ListCardResponse, WalletBalanceResponse
     ] = None
