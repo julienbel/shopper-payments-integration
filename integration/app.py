@@ -7,7 +7,7 @@ import sentry_sdk
 from flask import Flask, jsonify, request
 
 from integration.rest_service.adapters import ShopperPaymentsClientAdapter
-from integration.rest_service.data_classes import ErrorDetail, Response, ShopperCardData
+from integration.rest_service.data_classes import ErrorDetail, Response, ShopperCardData, ErrorResponse
 from integration.rest_service.providers.exceptions import (
     GenericAPIException,
 )
@@ -42,7 +42,7 @@ def run_app(cls):
         except AttributeError:
             error_message = e.error_message
         return jsonify(
-            Response(
+            ErrorResponse(
                 error_details=[ErrorDetail(code=e.error_code, message=error_message)],
             )
         ), code

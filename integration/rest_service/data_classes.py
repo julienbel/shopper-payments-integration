@@ -48,10 +48,14 @@ class WalletBalanceResponse:
     currency: str
     country: str
 
+@dataclass
+class ErrorResponse:
+    error_details: List[ErrorDetail] = None
+
 
 @dataclass
 class Response:
     data: Union[
         CardBalanceResponse, CardResponse, ListCardResponse, WalletBalanceResponse
     ] = None
-    error_details: List[ErrorDetail] = None
+
