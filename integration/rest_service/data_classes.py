@@ -50,9 +50,12 @@ class WalletBalanceResponse:
 
 
 @dataclass
+class ErrorResponse:
+    error_details: List[ErrorDetail] = None
+
+
+@dataclass
 class Response:
-    status: str
     data: Union[
         CardBalanceResponse, CardResponse, ListCardResponse, WalletBalanceResponse
     ] = None
-    error_details: List[ErrorDetail] = None

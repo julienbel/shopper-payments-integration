@@ -1,3 +1,4 @@
+import base64
 import json
 import logging
 from json import JSONDecodeError
@@ -5,18 +6,16 @@ from os import getenv
 
 import sentry_sdk
 from flask import Flask, jsonify, request
-from requests import Timeout
 
 from integration.rest_service.adapters import ShopperPaymentsClientAdapter
-from integration.rest_service.constants import FAILED
-from integration.rest_service.data_classes import ErrorDetail, Response, ShopperCardData
-from integration.rest_service.providers.exceptions import (
-    BadRequestAPIException,
-    GenericAPIException,
-    NotFoundAPIException,
+from integration.rest_service.data_classes import (
+    ErrorDetail,
+    ErrorResponse,
+    Response,
+    ShopperCardData,
 )
-
-from .middlewares import AuthorizationMiddleware
+from integration.rest_service.exceptions import UnauthorizedSatelliteException
+from integration.rest_service.providers.exceptions import GenericAPIException
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +37,32 @@ def run_app(cls):
     shopper_payments_adapter = cls()
 
     app = Flask(__name__)
-    app.wsgi_app = AuthorizationMiddleware(app.wsgi_app)
+
+    def validate_request(signature):
+        password = None
+        if signature:
+            password = str(base64.b64decode(signature), "utf-8")
+
+        if not password == getenv("REQUEST_PASSWORD"):
+            raise UnauthorizedSatelliteException(
+                error_message="Satellite unauthorized exception"
+            )
+
+    def get_error_response(e, code):
+        try:
+            error_message = e.error_message.decode()
+        except AttributeError:
+            error_message = e.error_message
+        return (
+            jsonify(
+                ErrorResponse(
+                    error_details=[
+                        ErrorDetail(code=e.error_code, message=error_message)
+                    ],
+                )
+            ),
+            code,
+        )
 
     def get_logger_data(exception):
         data = {
@@ -46,7 +70,7 @@ def run_app(cls):
                 "provider": shopper_payments_adapter.name,
             }
         }
-        message = exception.message  if hasattr(exception, 'message') else None
+        message = exception.message if hasattr(exception, "message") else None
         if message:
             try:
                 data["data"]["detail"] = json.loads(message)
@@ -57,215 +81,111 @@ def run_app(cls):
 
     @app.route(f"/cards", methods=["GET"])
     def list_cards():
+
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         try:
             response_data = shopper_payments_adapter.list_cards()
-        except (Timeout, ConnectionError) as e:
-            logger.info(
-                "Shopper payments integration adapter timeout",
-                extra=get_logger_data(e),
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="408", message="Timeout")],
-                )
-            )
-        except (BadRequestAPIException, NotFoundAPIException) as e:
-            message = e.message if hasattr(e, 'message') else None
-            logger.info(
-                "Shopper payments integration adapter request exception",
-                extra=get_logger_data(e),
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="400", message=message)],
-                )
-            )
         except GenericAPIException as e:
-            message = e.message if hasattr(e, 'message') else None
             logger.info(
-                "Shopper payments integration adapter generic exception",
+                "Shopper payments integration (list_cards) request error %s",
+                e.error_message,
                 extra=get_logger_data(e),
             )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="500", message=message)],
-                )
-            )
-        return response_data
+            return get_error_response(e, 400)
+
+        return jsonify(Response(data=response_data))
 
     @app.route(f"/wallet/balance", methods=["GET"])
     def wallet_balance():
         try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
+        try:
             response_data = shopper_payments_adapter.wallet_balance()
-        except (Timeout, ConnectionError) as e:
-            logger.info(
-                "Shopper payments integration adapter timeout", extra=get_logger_data(e)
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="408", message="Timeout")],
-                )
-            )
-        except (BadRequestAPIException, NotFoundAPIException) as e:
-            message = e.message if hasattr(e, 'message') else None
-            logger.info(
-                "Shopper payments integration adapter request exception",
-                extra=get_logger_data(e),
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="400", message=message)],
-                )
-            )
         except GenericAPIException as e:
-            message = e.message if hasattr(e, 'message') else None
             logger.info(
-                "Shopper payments integration adapter generic exception",
+                "Shopper payments integration (wallet_balance) request error %s",
+                e.error_message,
                 extra=get_logger_data(e),
             )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="500", message=message)],
-                )
-            )
-        return response_data
+            return get_error_response(e, 400)
+        return jsonify(Response(data=response_data))
 
     @app.route(f"/card/<card_issuer_id>/balance", methods=["GET"])
     def get_card_balance(card_issuer_id):
         try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
+        try:
             response_data = shopper_payments_adapter.get_card_balance(
                 card_issuer_id=card_issuer_id
             )
-        except (Timeout, ConnectionError) as e:
-            logger.info(
-                "Shopper payments integration adapter timeout", extra=get_logger_data(e)
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="408", message="Timeout")],
-                )
-            )
-        except (BadRequestAPIException, NotFoundAPIException) as e:
-            message = e.message if hasattr(e, 'message') else None
-            logger.info(
-                "Shopper payments integration adapter request exception",
-                extra=get_logger_data(e),
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="400", message=message)],
-                )
-            )
         except GenericAPIException as e:
-            message = e.message if hasattr(e, 'message') else None
             logger.info(
-                "Shopper payments integration adapter generic exception",
+                "Shopper payments integration (get_card_balance) request error %s",
+                e.error_message,
                 extra=get_logger_data(e),
             )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="500", message=message)],
-                )
-            )
-        return response_data
+            return get_error_response(e, 400)
+        return jsonify(Response(data=response_data))
 
     @app.route(f"/card/<card_issuer_id>/load", methods=["POST"])
     def load_card(card_issuer_id):
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         data = json.loads(request.data)
         try:
             response_data = shopper_payments_adapter.load_card(
                 card_issuer_id=card_issuer_id, amount=data.get("amount")
             )
-        except (Timeout, ConnectionError) as e:
-            logger.info(
-                "Shopper payments integration adapter timeout", extra=get_logger_data(e)
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="408", message="Timeout")],
-                )
-            )
-        except (BadRequestAPIException, NotFoundAPIException) as e:
-            message = e.message if hasattr(e, 'message') else None
-            logger.info(
-                "Shopper payments integration adapter request exception",
-                extra=get_logger_data(e),
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="400", message=message)],
-                )
-            )
         except GenericAPIException as e:
-            message = e.message if hasattr(e, 'message') else None
             logger.info(
-                "Shopper payments integration adapter generic exception",
+                "Shopper payments integration (load_card) request error %s",
+                e.error_message,
                 extra=get_logger_data(e),
             )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="500", message=message)],
-                )
-            )
-        return response_data
+            return get_error_response(e, 400)
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_issuer_id>/unload", methods=["POST"])
     def unload_card(card_issuer_id):
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         data = json.loads(request.data)
         try:
             response_data = shopper_payments_adapter.unload_card(
                 card_issuer_id=card_issuer_id, amount=data.get("amount")
             )
-        except (Timeout, ConnectionError) as e:
-            logger.info(
-                "Shopper payments integration adapter timeout", extra=get_logger_data(e)
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="408", message="Timeout")],
-                )
-            )
-        except (BadRequestAPIException, NotFoundAPIException) as e:
-            message = e.message if hasattr(e, 'message') else None
-            logger.info(
-                "Shopper payments integration adapter request exception",
-                extra=get_logger_data(e),
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="400", message=message)],
-                )
-            )
         except GenericAPIException as e:
-            message = e.message if hasattr(e, 'message') else None
             logger.info(
-                "Shopper payments integration adapter generic exception",
+                "Shopper payments integration (unload_card) request error %s",
+                e.error_message,
                 extra=get_logger_data(e),
             )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="500", message=message)],
-                )
-            )
-        return response_data
+            return get_error_response(e, 400)
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_number_id>/assign", methods=["POST"])
     def assign_card(card_number_id):
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         data = json.loads(request.data)
         shopper_card_data = ShopperCardData(
             email=data.get("email"),
@@ -284,125 +204,55 @@ def run_app(cls):
             response_data = shopper_payments_adapter.assign_card(
                 card_number_id=card_number_id, shopper_card_data=shopper_card_data
             )
-        except (Timeout, ConnectionError):
-            logger.info(
-                "Shopper payments integration adapter timeout", extra=get_logger_data()
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="408", message="Timeout")],
-                )
-            )
-        except (BadRequestAPIException, NotFoundAPIException) as e:
-            message = e.message if hasattr(e, 'message') else None
-            logger.info(
-                "Shopper payments integration adapter request exception",
-                extra=get_logger_data(e),
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="400", message=message)],
-                )
-            )
         except GenericAPIException as e:
-            message = e.message if hasattr(e, 'message') else None
             logger.info(
-                "Shopper payments integration adapter generic exception",
+                "Shopper payments integration (assign_card) request error %s",
+                e.error_message,
                 extra=get_logger_data(e),
             )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="500", message=message)],
-                )
-            )
-        return response_data
+            return get_error_response(e, 400)
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_issuer_id>/activate", methods=["POST"])
     def activate_card(card_issuer_id):
+
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         try:
             response_data = shopper_payments_adapter.activate_card(
                 card_issuer_id=card_issuer_id
             )
-        except (Timeout, ConnectionError) as e:
-            logger.info(
-                "Shopper payments integration adapter timeout", extra=get_logger_data(e)
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="408", message="Timeout")],
-                )
-            )
-        except (BadRequestAPIException, NotFoundAPIException) as e:
-            message = e.message if hasattr(e, 'message') else None
-            logger.info(
-                "Shopper payments integration adapter request exception",
-                extra=get_logger_data(e),
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="400", message=message)],
-                )
-            )
         except GenericAPIException as e:
-            message = e.message if hasattr(e, 'message') else None
             logger.info(
-                "Shopper payments integration adapter generic exception",
+                "Shopper payments integration (activate_card) request error %s",
+                e.error_message,
                 extra=get_logger_data(e),
             )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="500", message=message)],
-                )
-            )
-        return response_data
+            return get_error_response(e, 400)
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_issuer_id>/deactivate", methods=["POST"])
     def deactivate_card(card_issuer_id):
         try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
+        try:
             response_data = shopper_payments_adapter.deactivate_card(
                 card_issuer_id=card_issuer_id
             )
-        except (Timeout, ConnectionError) as e:
-            logger.info(
-                "Shopper payments integration adapter timeout", extra=get_logger_data(e)
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="408", message="Timeout")],
-                )
-            )
-        except (BadRequestAPIException, NotFoundAPIException) as e:
-            message = e.message if hasattr(e, 'message') else None
-            logger.info(
-                "Shopper payments integration adapter request exception",
-                extra=get_logger_data(e),
-            )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="400", message=message)],
-                )
-            )
         except GenericAPIException as e:
-            message = e.message if hasattr(e, 'message') else None
             logger.info(
-                "Shopper payments integration adapter generic exception",
+                "Shopper payments integration (deactivate_card) request error %s",
+                e.error_message,
                 extra=get_logger_data(e),
             )
-            return jsonify(
-                Response(
-                    status=FAILED,
-                    error_details=[ErrorDetail(code="500", message=e.message)],
-                )
-            )
-        return response_data
+            return get_error_response(e, 400)
+        return jsonify(response_data)
 
     @app.route(f"/healthz", methods=["GET"])
     def health():
