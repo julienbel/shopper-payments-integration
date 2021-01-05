@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Dict, Optional, Union
 
-from .data_classes import Response, ShopperCardData, ListCardResponse, WalletBalanceResponse
+from .data_classes import Response, ShopperCardData, ListCardResponse, WalletBalanceResponse, CardBalanceResponse
 
 
 class ShopperPaymentsClientAdapter:
@@ -13,7 +13,7 @@ class ShopperPaymentsClientAdapter:
     ) -> Optional[Response]:
         raise NotImplementedError
 
-    def get_card_balance(self, card_issuer_id: str) -> Optional[Response]:
+    def get_card_balance(self, card_issuer_id: str) -> CardBalanceResponse:
         raise NotImplementedError
 
     def load_card(
@@ -32,10 +32,7 @@ class ShopperPaymentsClientAdapter:
     def deactivate_card(self, card_issuer_id) -> Optional[Response]:
         raise NotImplementedError
 
-    def wallet_balance(self) -> Optional[Response]:
-        raise NotImplementedError
-
-    def response_to_check(self, data: Dict[str, Union[str, int, Dict]]) -> Response:
+    def wallet_balance(self) -> WalletBalanceResponse:
         raise NotImplementedError
 
     def response_wallet_balance(
