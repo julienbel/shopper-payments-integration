@@ -83,7 +83,7 @@ def run_app(cls):
         try:
             response_data = shopper_payments_adapter.list_cards()
         except GenericAPIException as e:
-            logger.info(f"Shopper payments integration (list_cards) request error {e.error_message}",
+            logger.info("Shopper payments integration (list_cards) request error %s", e.error_message,
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
 
@@ -100,7 +100,7 @@ def run_app(cls):
         try:
             response_data = shopper_payments_adapter.wallet_balance()
         except GenericAPIException as e:
-            logger.info(f"Shopper payments integration (wallet_balance) request error {e.error_message}",
+            logger.info("Shopper payments integration (wallet_balance) request error %s", e.error_message,
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
         return jsonify(Response(data=response_data))
@@ -117,7 +117,7 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id
             )
         except GenericAPIException as e:
-            logger.info(f"Shopper payments integration (get_card_balance) request error {e.error_message}",
+            logger.info("Shopper payments integration (get_card_balance) request error %s", e.error_message,
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
         return jsonify(Response(data=response_data))
@@ -135,7 +135,7 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id, amount=data.get("amount")
             )
         except GenericAPIException as e:
-            logger.info(f"Shopper payments integration (load_card) request error {e.error_message}",
+            logger.info("Shopper payments integration (load_card) request error %s", e.error_message,
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
         return jsonify(response_data)
@@ -153,7 +153,7 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id, amount=data.get("amount")
             )
         except GenericAPIException as e:
-            logger.info(f"Shopper payments integration (unload_card) request error {e.error_message}",
+            logger.info("Shopper payments integration (unload_card) request error %s", e.error_message,
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
         return jsonify(response_data)
@@ -185,7 +185,7 @@ def run_app(cls):
                 card_number_id=card_number_id, shopper_card_data=shopper_card_data
             )
         except GenericAPIException as e:
-            logger.info(f"Shopper payments integration (assign_card) request error {e.error_message}",
+            logger.info("Shopper payments integration (assign_card) request error %s", e.error_message,
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
         return jsonify(response_data)
@@ -203,7 +203,7 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id
             )
         except GenericAPIException as e:
-            logger.info(f"Shopper payments integration (activate_card) request error {e.error_message}",
+            logger.info("Shopper payments integration (activate_card) request error %s", e.error_message,
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
         return jsonify(response_data)
@@ -220,7 +220,7 @@ def run_app(cls):
                 card_issuer_id=card_issuer_id
             )
         except GenericAPIException as e:
-            logger.info(f"Shopper payments integration (deactivate_card) request error {e.error_message}",
+            logger.info("Shopper payments integration (deactivate_card) request error %s", e.error_message,
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
         return jsonify(response_data)
