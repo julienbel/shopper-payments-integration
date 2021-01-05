@@ -7,7 +7,7 @@ import sentry_sdk
 from flask import Flask, jsonify, request
 
 from integration.rest_service.adapters import ShopperPaymentsClientAdapter
-from integration.rest_service.data_classes import ErrorDetail, ShopperCardData, ErrorResponse
+from integration.rest_service.data_classes import ErrorDetail, ShopperCardData, ErrorResponse, Response
 from integration.rest_service.providers.exceptions import (
     GenericAPIException
 )
@@ -87,7 +87,7 @@ def run_app(cls):
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
 
-        return response_data
+        return jsonify(Response(data=response_data))
 
 
     @app.route(f"/wallet/balance", methods=["GET"])
