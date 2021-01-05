@@ -103,7 +103,7 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (wallet_balance) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(Response(data=response_data))
 
     @app.route(f"/card/<card_issuer_id>/balance", methods=["GET"])
     def get_card_balance(card_issuer_id):

@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Dict, Optional, Union
 
-from .data_classes import Response, ShopperCardData, ListCardResponse
+from .data_classes import Response, ShopperCardData, ListCardResponse, WalletBalanceResponse
 
 
 class ShopperPaymentsClientAdapter:
@@ -40,7 +40,7 @@ class ShopperPaymentsClientAdapter:
 
     def response_wallet_balance(
         self, data: Dict[str, Union[str, int, Dict]]
-    ) -> Response:
+    ) -> WalletBalanceResponse:
         raise NotImplementedError
 
     def response_card_balance(self, data: Dict[str, Union[str, int, Dict]]) -> Response:
