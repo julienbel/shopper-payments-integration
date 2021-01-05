@@ -56,5 +56,5 @@ class ShopperPaymentsClientAdapter:
     ) -> ListCardResponse:
         raise NotImplementedError
 
-    def external_service_is_healthy(self):
+    def external_service_is_healthy(self) -> bool:
         raise NotImplementedError
