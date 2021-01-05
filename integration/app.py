@@ -138,7 +138,7 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (load_card) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_issuer_id>/unload", methods=["POST"])
     def unload_card(card_issuer_id):
@@ -156,7 +156,7 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (unload_card) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_number_id>/assign", methods=["POST"])
     def assign_card(card_number_id):
@@ -206,7 +206,7 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (activate_card) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_issuer_id>/deactivate", methods=["POST"])
     def deactivate_card(card_issuer_id):
@@ -223,7 +223,7 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (deactivate_card) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/healthz", methods=["GET"])
     def health():

@@ -10,7 +10,7 @@ class ShopperPaymentsClientAdapter:
 
     def assign_card(
         self, card_number_id: str, shopper_card_data: ShopperCardData
-    ) -> Optional[Response]:
+    ) -> Response:
         raise NotImplementedError
 
     def get_card_balance(self, card_issuer_id: str) -> CardBalanceResponse:
@@ -18,18 +18,18 @@ class ShopperPaymentsClientAdapter:
 
     def load_card(
         self, card_issuer_id: str, amount: Union[Decimal, float, str]
-    ) -> Optional[Response]:
+    ) -> Response:
         raise NotImplementedError
 
     def unload_card(
         self, card_issuer_id, amount: Union[Decimal, float, str]
-    ) -> Optional[Response]:
+    ) -> Response:
         raise NotImplementedError
 
-    def activate_card(self, card_issuer_id) -> Optional[Response]:
+    def activate_card(self, card_issuer_id) -> Response:
         raise NotImplementedError
 
-    def deactivate_card(self, card_issuer_id) -> Optional[Response]:
+    def deactivate_card(self, card_issuer_id) -> Response:
         raise NotImplementedError
 
     def wallet_balance(self) -> WalletBalanceResponse:
@@ -40,10 +40,10 @@ class ShopperPaymentsClientAdapter:
     ) -> WalletBalanceResponse:
         raise NotImplementedError
 
-    def response_card_balance(self, data: Dict[str, Union[str, int, Dict]]) -> Response:
+    def response_card_balance(self, data: Dict[str, Union[str, int, Dict]]) -> CardBalanceResponse:
         raise NotImplementedError
 
-    def response_list_cards(self, data: Dict[str, Union[str, int, Dict]]) -> Response:
+    def response_list_cards(self, data: Dict[str, Union[str, int, Dict]]) -> ListCardResponse:
         raise NotImplementedError
 
     def external_service_is_healthy(self):
