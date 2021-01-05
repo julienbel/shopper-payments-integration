@@ -87,7 +87,7 @@ def run_app(cls):
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
 
-        return jsonify(response_data)
+        return response_data
 
 
     @app.route(f"/wallet/balance", methods=["GET"])
