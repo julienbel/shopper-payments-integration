@@ -4,7 +4,7 @@ import setuptools
 
 setup(
     name="shopper_payments_integration",
-    version="1.7dev3",
+    version="1.8dev",
     packages=setuptools.find_packages(),
     license="",
     long_description=open("README.md").read(),
