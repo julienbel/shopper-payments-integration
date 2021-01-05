@@ -46,5 +46,5 @@ class ShopperPaymentsClientAdapter:
     def response_list_cards(self, data: Dict[str, Union[str, int, Dict]]) -> ListCardResponse:
         raise NotImplementedError
 
-    def external_service_is_healthy(self):
+    def external_service_is_healthy(self) -> bool:
         raise NotImplementedError
