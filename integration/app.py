@@ -7,12 +7,14 @@ import sentry_sdk
 from flask import Flask, jsonify, request
 
 from integration.rest_service.adapters import ShopperPaymentsClientAdapter
-from integration.rest_service.data_classes import ErrorDetail, Response, ShopperCardData, ErrorResponse
+from integration.rest_service.data_classes import ErrorDetail, ShopperCardData, ErrorResponse
 from integration.rest_service.providers.exceptions import (
-    GenericAPIException,
+    GenericAPIException
 )
+import base64
+from os import getenv
 
-from .middlewares import AuthorizationMiddleware
+from integration.rest_service.exceptions import UnauthorizedSatelliteException
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +36,15 @@ def run_app(cls):
     shopper_payments_adapter = cls()
 
     app = Flask(__name__)
-    app.wsgi_app = AuthorizationMiddleware(app.wsgi_app)
+
+
+    def validate_request(signature):
+        password = str(base64.b64decode(signature), "utf-8")
+
+        if not password == getenv("REQUEST_PASSWORD"):
+            raise UnauthorizedSatelliteException(
+                error_message="Satellite unauthorized exception"
+            )
 
     def get_error_response(e, code):
         try:
@@ -64,26 +74,44 @@ def run_app(cls):
 
     @app.route(f"/cards", methods=["GET"])
     def list_cards():
+
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         try:
             response_data = shopper_payments_adapter.list_cards()
         except GenericAPIException as e:
             logger.info(f"Shopper payments integration (list_cards) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+
+        return jsonify(response_data)
+
 
     @app.route(f"/wallet/balance", methods=["GET"])
     def wallet_balance():
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         try:
             response_data = shopper_payments_adapter.wallet_balance()
         except GenericAPIException as e:
             logger.info(f"Shopper payments integration (wallet_balance) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_issuer_id>/balance", methods=["GET"])
     def get_card_balance(card_issuer_id):
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         try:
             response_data = shopper_payments_adapter.get_card_balance(
                 card_issuer_id=card_issuer_id
@@ -92,10 +120,15 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (get_card_balance) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_issuer_id>/load", methods=["POST"])
     def load_card(card_issuer_id):
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         data = json.loads(request.data)
         try:
             response_data = shopper_payments_adapter.load_card(
@@ -105,10 +138,15 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (load_card) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_issuer_id>/unload", methods=["POST"])
     def unload_card(card_issuer_id):
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         data = json.loads(request.data)
         try:
             response_data = shopper_payments_adapter.unload_card(
@@ -118,10 +156,16 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (unload_card) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_number_id>/assign", methods=["POST"])
     def assign_card(card_number_id):
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
+
         data = json.loads(request.data)
         shopper_card_data = ShopperCardData(
             email=data.get("email"),
@@ -144,10 +188,16 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (assign_card) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_issuer_id>/activate", methods=["POST"])
     def activate_card(card_issuer_id):
+
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         try:
             response_data = shopper_payments_adapter.activate_card(
                 card_issuer_id=card_issuer_id
@@ -156,10 +206,15 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (activate_card) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/card/<card_issuer_id>/deactivate", methods=["POST"])
     def deactivate_card(card_issuer_id):
+        try:
+            validate_request(request.headers.get("Authorization"))
+        except UnauthorizedSatelliteException as e:
+            return get_error_response(e, 403)
+
         try:
             response_data = shopper_payments_adapter.deactivate_card(
                 card_issuer_id=card_issuer_id
@@ -168,7 +223,7 @@ def run_app(cls):
             logger.info(f"Shopper payments integration (deactivate_card) request error {e.error_message}",
                         extra=get_logger_data(e))
             return get_error_response(e, 400)
-        return response_data
+        return jsonify(response_data)
 
     @app.route(f"/healthz", methods=["GET"])
     def health():
