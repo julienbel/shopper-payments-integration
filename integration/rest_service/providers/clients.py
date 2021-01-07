@@ -98,8 +98,8 @@ class GenericAPIClient(object):
                 method, url, data=data, json=json, params=params, timeout=timeout
             )
             response.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            raise exceptions.UnhandledErrorAPIException(
+        except requests.exceptions.Timeout as e:
+            raise exceptions.TimeoutAPIException(
                 error_message=str(e)
             )
         except HTTPError:
