@@ -92,11 +92,16 @@ class GenericAPIClient(object):
         timeout: int = 5,
     ) -> Dict[str, Union[str, int, Dict]]:
         url = f"{self.base_url}{path}"
-        response = self.client.request(
-            method, url, data=data, json=json, params=params, timeout=timeout
-        )
+
         try:
+            response = self.client.request(
+                method, url, data=data, json=json, params=params, timeout=timeout
+            )
             response.raise_for_status()
+        except requests.exceptions.Timeout as e:
+            raise exceptions.TimeoutAPIException(
+                error_message=str(e)
+            )
         except HTTPError:
             if response.status_code == 401 and max_retries and max_retries > 0:
                 self.refresh_headers()
