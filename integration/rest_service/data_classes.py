@@ -11,7 +11,6 @@ class ShopperCardData:
     birthdate: str
     phone_number: str
     email: str
-    card_id: str
     pin_number: str = None
     month: str = None
     year: str = None
