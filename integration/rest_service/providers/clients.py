@@ -82,16 +82,15 @@ class GenericAPIClient(object):
             )
 
     def request(
-        self,
-        path: str,
-        method: str,
-        data: Dict[str, Union[str, int, Dict]] = None,
-        json: Dict[str, Union[str, int, Dict]] = None,
-        params: Dict[str, Union[str, int, Dict]] = None,
-        max_retries: int = 3,
-        timeout: int = 5,
+            self,
+            url: str,
+            method: str,
+            data: Dict[str, Union[str, int, Dict]] = None,
+            json: Dict[str, Union[str, int, Dict]] = None,
+            params: Dict[str, Union[str, int, Dict]] = None,
+            max_retries: int = 3,
+            timeout: int = 5,
     ) -> Dict[str, Union[str, int, Dict]]:
-        url = f"{self.base_url}{path}"
 
         try:
             response = self.client.request(
@@ -103,10 +102,10 @@ class GenericAPIClient(object):
                 error_message=str(e)
             )
         except HTTPError:
-            if response.status_code == 401 and max_retries and max_retries > 0:
+            if response.status_code in [401, 403] and max_retries and max_retries > 0:
                 self.refresh_headers()
                 return self.request(
-                    path=path,
+                    url=url,
                     method=method,
                     data=data,
                     json=json,
@@ -114,4 +113,6 @@ class GenericAPIClient(object):
                     max_retries=max_retries - 1,
                 )
             self.handle_error(response)
+            if response.status_code == 200 and not response.content:
+                raise exceptions.NotFoundAPIException
         return response.json()
