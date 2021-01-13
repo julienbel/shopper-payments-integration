@@ -38,15 +38,6 @@ def run_app(cls):
 
     app = Flask(__name__)
 
-    def validate_request(signature):
-        password = None
-        if signature:
-            password = str(base64.b64decode(signature), "utf-8")
-
-        if not password == getenv("REQUEST_PASSWORD"):
-            raise UnauthorizedSatelliteException(
-                error_message="Satellite unauthorized exception"
-            )
 
     def get_error_response(e, code):
         try:
@@ -83,11 +74,6 @@ def run_app(cls):
     def list_cards():
 
         try:
-            validate_request(request.headers.get("Authorization"))
-        except UnauthorizedSatelliteException as e:
-            return get_error_response(e, 403)
-
-        try:
             response_data = shopper_payments_adapter.list_cards()
         except GenericAPIException as e:
             logger.info(
@@ -102,11 +88,6 @@ def run_app(cls):
     @app.route(f"/wallet/balance", methods=["GET"])
     def wallet_balance():
         try:
-            validate_request(request.headers.get("Authorization"))
-        except UnauthorizedSatelliteException as e:
-            return get_error_response(e, 403)
-
-        try:
             response_data = shopper_payments_adapter.wallet_balance()
         except GenericAPIException as e:
             logger.info(
@@ -119,11 +100,6 @@ def run_app(cls):
 
     @app.route(f"/card/<card_issuer_id>/balance", methods=["GET"])
     def get_card_balance(card_issuer_id):
-        try:
-            validate_request(request.headers.get("Authorization"))
-        except UnauthorizedSatelliteException as e:
-            return get_error_response(e, 403)
-
         try:
             response_data = shopper_payments_adapter.get_card_balance(
                 card_issuer_id=card_issuer_id
@@ -139,11 +115,6 @@ def run_app(cls):
 
     @app.route(f"/card/<card_issuer_id>/load", methods=["POST"])
     def load_card(card_issuer_id):
-        try:
-            validate_request(request.headers.get("Authorization"))
-        except UnauthorizedSatelliteException as e:
-            return get_error_response(e, 403)
-
         data = json.loads(request.data)
         try:
             response_data = shopper_payments_adapter.load_card(
@@ -160,11 +131,6 @@ def run_app(cls):
 
     @app.route(f"/card/<card_issuer_id>/unload", methods=["POST"])
     def unload_card(card_issuer_id):
-        try:
-            validate_request(request.headers.get("Authorization"))
-        except UnauthorizedSatelliteException as e:
-            return get_error_response(e, 403)
-
         data = json.loads(request.data)
         try:
             response_data = shopper_payments_adapter.unload_card(
@@ -181,11 +147,6 @@ def run_app(cls):
 
     @app.route(f"/card/<card_number_id>/assign", methods=["POST"])
     def assign_card(card_number_id):
-        try:
-            validate_request(request.headers.get("Authorization"))
-        except UnauthorizedSatelliteException as e:
-            return get_error_response(e, 403)
-
         data = json.loads(request.data)
         shopper_card_data = ShopperCardData(
             email=data.get("email"),
@@ -215,12 +176,6 @@ def run_app(cls):
 
     @app.route(f"/card/<card_issuer_id>/activate", methods=["POST"])
     def activate_card(card_issuer_id):
-
-        try:
-            validate_request(request.headers.get("Authorization"))
-        except UnauthorizedSatelliteException as e:
-            return get_error_response(e, 403)
-
         try:
             response_data = shopper_payments_adapter.activate_card(
                 card_issuer_id=card_issuer_id
@@ -236,11 +191,6 @@ def run_app(cls):
 
     @app.route(f"/card/<card_issuer_id>/deactivate", methods=["POST"])
     def deactivate_card(card_issuer_id):
-        try:
-            validate_request(request.headers.get("Authorization"))
-        except UnauthorizedSatelliteException as e:
-            return get_error_response(e, 403)
-
         try:
             response_data = shopper_payments_adapter.deactivate_card(
                 card_issuer_id=card_issuer_id
