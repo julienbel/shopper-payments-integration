@@ -32,6 +32,7 @@ class CardBalanceResponse:
 class CardResponse:
     card_number_id: str
     card_issuer_id: str
+    card_internal_id: str = None
     card_status: str = None
     last_four_digits: str = None
 
